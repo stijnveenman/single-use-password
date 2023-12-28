@@ -18,6 +18,10 @@ struct AppContext {
 async fn main() {
     dotenv().ok();
 
+    tracing_subscriber::fmt()
+        .with_max_level(tracing::Level::DEBUG)
+        .init();
+
     let config = Config::parse();
 
     let pool = PgPoolOptions::new()
@@ -32,6 +36,8 @@ async fn main() {
         .route("/passwords", get(get_passwords))
         .route("/failing", get(failing))
         .with_state(state);
+
+    tracing::info!("Listening on {}", config.server_url);
 
     let listener = tokio::net::TcpListener::bind(config.server_url)
         .await
