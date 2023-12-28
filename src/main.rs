@@ -1,4 +1,9 @@
+mod config;
+
 use axum::{extract::State, http::StatusCode, response::IntoResponse, routing::get, Json, Router};
+use clap::Parser;
+use config::Config;
+use dotenv::dotenv;
 use serde::Serialize;
 use serde_json::{json, Value};
 use sqlx::{postgres::PgPoolOptions, types::Uuid, PgPool};
@@ -11,9 +16,13 @@ struct AppContext {
 
 #[tokio::main]
 async fn main() {
+    dotenv().ok();
+
+    let config = Config::parse();
+
     let pool = PgPoolOptions::new()
         .max_connections(5)
-        .connect("postgres://postgres:postgres@localhost:5433/single-use-password")
+        .connect(&config.database_url)
         .await
         .unwrap();
 

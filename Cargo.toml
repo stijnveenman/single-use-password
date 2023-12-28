@@ -12,6 +12,8 @@ serde = { version = "1.0.193", features = ["derive"] }
 serde_json = { version = "1.0.108" }
 thiserror = { version = "1.0.52" }
 sqlx = { version = "0.7.3", features = ["runtime-tokio", "postgres", "uuid"] }
+clap = { version = "4.4.11", features = ["env", "derive"] }
+dotenv = { version = "0.15.0" }
 
 [dependencies.uuid]
 features = ["serde"]
