@@ -1,6 +1,6 @@
 use axum::{http::StatusCode, response::IntoResponse, routing::get, Json, Router};
 use serde_json::{json, Value};
-use sqlx::{postgres::PgPoolOptions, types::Uuid};
+use sqlx::postgres::PgPoolOptions;
 use thiserror::Error;
 
 #[tokio::main]
@@ -15,9 +15,7 @@ async fn main() {
         .await
         .unwrap();
 
-    // Make a simple query to return the given parameter (use a question mark `?` instead of `$1` for MySQL)
-    let row: Vec<(Uuid, String, String)> = sqlx::query_as("SELECT * FROM passwords")
-        .bind(150_i64)
+    let row = sqlx::query!("SELECT * FROM passwords")
         .fetch_all(&pool)
         .await
         .unwrap();
