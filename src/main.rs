@@ -20,17 +20,10 @@ async fn main() {
     let state = AppContext { db: pool };
 
     let app = Router::new()
-        .route("/json", get(json))
         .route("/passwords", get(get_passwords))
         .route("/failing", get(failing))
         .with_state(state);
 
-    //let row = sqlx::query!("SELECT * FROM passwords")
-    //    .fetch_all(&pool)
-    //    .await
-    //    .unwrap();
-
-    // run our app with hyper, listening globally on port 3000
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
     axum::serve(listener, app).await.unwrap();
 }
@@ -49,12 +42,6 @@ async fn get_passwords(State(context): State<AppContext>) -> Json<Vec<Password>>
         .unwrap();
 
     Json(data)
-}
-
-// `Json` gives a content-type of `application/json` and works with any type
-// that implements `serde::Serialize`
-async fn json() -> Json<Value> {
-    Json(json!({ "data": 42 }))
 }
 
 #[derive(Error, Debug)]
