@@ -1,8 +1,12 @@
 use axum::{extract::State, routing::get, Json, Router};
 use serde::{Deserialize, Serialize};
+use tracing::info;
 use uuid::Uuid;
 
-use crate::{app_context::AppContext, app_result::AppResult};
+use crate::{
+    app_context::AppContext,
+    app_result::{AppError, AppResult},
+};
 
 pub fn router() -> Router<AppContext> {
     Router::new().route("/", get(get_passwords).post(create_password))
@@ -33,5 +37,26 @@ async fn create_password(
     State(context): State<AppContext>,
     Json(payload): Json<CreatePassword>,
 ) -> AppResult<Password> {
-    Err(crate::app_result::AppError::NotImplemented)
+    let password = Password {
+        id: Uuid::new_v4(),
+        password: payload.password,
+        key: "".to_string(),
+    };
+
+    let result = sqlx::query!(
+        "INSERT INTO passwords (id, key, password) VALUES ($1, $2, $3)",
+        password.id,
+        "",
+        password.password
+    )
+    .execute(&context.db)
+    .await;
+
+    match result {
+        Ok(_) => Ok(Json(password)),
+        Err(e) => {
+            info!("Unexpected db error {}", e);
+            Err(AppError::Unexpected)
+        }
+    }
 }

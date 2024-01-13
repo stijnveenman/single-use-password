@@ -6,8 +6,11 @@ use thiserror::Error;
 pub enum AppError {
     #[error("Random intermittent error")]
     Random,
+    #[allow(dead_code)]
     #[error("This feature is not implemented yet")]
     NotImplemented,
+    #[error("Unexpected error")]
+    Unexpected,
 }
 
 impl IntoResponse for AppError {
@@ -16,6 +19,7 @@ impl IntoResponse for AppError {
             match self {
                 AppError::Random => StatusCode::BAD_REQUEST,
                 AppError::NotImplemented => StatusCode::BAD_REQUEST,
+                AppError::Unexpected => StatusCode::INTERNAL_SERVER_ERROR,
             },
             Json(json!({"error":self.to_string()})),
         )
