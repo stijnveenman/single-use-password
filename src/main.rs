@@ -32,7 +32,7 @@ async fn main() {
     let state = AppContext { db: pool };
 
     let app = Router::new()
-        .nest("/passwords", passwords::router::new())
+        .nest("/passwords", passwords::router())
         .route("/failing", get(failing))
         .with_state(state);
 

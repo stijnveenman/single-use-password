@@ -1,1 +1,2 @@
-pub mod router;
+mod router;
+pub use router::*;

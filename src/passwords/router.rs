@@ -4,7 +4,7 @@ use uuid::Uuid;
 
 use crate::{app_context::AppContext, app_result::AppResult};
 
-pub fn new() -> Router<AppContext> {
+pub fn router() -> Router<AppContext> {
     Router::new().route("/", get(get_passwords))
 }
 
