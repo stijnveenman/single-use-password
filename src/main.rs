@@ -1,13 +1,13 @@
 mod app_context;
 mod config;
+mod passwords;
 
-use axum::{extract::State, http::StatusCode, response::IntoResponse, routing::get, Json, Router};
+use axum::{http::StatusCode, response::IntoResponse, routing::get, Json, Router};
 use clap::Parser;
 use config::Config;
 use dotenv::dotenv;
-use serde::Serialize;
 use serde_json::{json, Value};
-use sqlx::{postgres::PgPoolOptions, types::Uuid};
+use sqlx::postgres::PgPoolOptions;
 use thiserror::Error;
 
 use crate::app_context::AppContext;
@@ -31,7 +31,7 @@ async fn main() {
     let state = AppContext { db: pool };
 
     let app = Router::new()
-        .route("/passwords", get(get_passwords))
+        .nest("/passwords", passwords::router::new())
         .route("/failing", get(failing))
         .with_state(state);
 
@@ -41,22 +41,6 @@ async fn main() {
         .await
         .unwrap();
     axum::serve(listener, app).await.unwrap();
-}
-
-#[derive(Serialize)]
-struct Password {
-    id: Uuid,
-    key: String,
-    password: String,
-}
-
-async fn get_passwords(State(context): State<AppContext>) -> Json<Vec<Password>> {
-    let data = sqlx::query_as!(Password, "SELECT * FROM passwords")
-        .fetch_all(&context.db)
-        .await
-        .unwrap();
-
-    Json(data)
 }
 
 #[derive(Error, Debug)]
