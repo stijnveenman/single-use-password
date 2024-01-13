@@ -1,14 +1,15 @@
 mod app_context;
+mod app_result;
 mod config;
 mod passwords;
 
-use axum::{http::StatusCode, response::IntoResponse, routing::get, Json, Router};
+use app_result::{AppError, AppResult};
+use axum::{routing::get, Router};
 use clap::Parser;
 use config::Config;
 use dotenv::dotenv;
-use serde_json::{json, Value};
+use serde_json::Value;
 use sqlx::postgres::PgPoolOptions;
-use thiserror::Error;
 
 use crate::app_context::AppContext;
 
@@ -43,24 +44,6 @@ async fn main() {
     axum::serve(listener, app).await.unwrap();
 }
 
-#[derive(Error, Debug)]
-enum AppError {
-    #[error("Random intermittent error")]
-    Random,
-}
-
-impl IntoResponse for AppError {
-    fn into_response(self) -> axum::response::Response {
-        match self {
-            AppError::Random => (
-                StatusCode::BAD_REQUEST,
-                Json(json!({"error":"Random error"})),
-            ),
-        }
-        .into_response()
-    }
-}
-
-async fn failing() -> Result<Json<Value>, AppError> {
+async fn failing() -> AppResult<Value> {
     Err(AppError::Random)
 }

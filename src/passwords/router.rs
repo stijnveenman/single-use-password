@@ -2,7 +2,7 @@ use axum::{extract::State, routing::get, Json, Router};
 use serde::Serialize;
 use uuid::Uuid;
 
-use crate::app_context::AppContext;
+use crate::{app_context::AppContext, app_result::AppResult};
 
 pub fn new() -> Router<AppContext> {
     Router::new().route("/", get(get_passwords))
@@ -15,11 +15,11 @@ struct Password {
     password: String,
 }
 
-async fn get_passwords(State(context): State<AppContext>) -> Json<Vec<Password>> {
+async fn get_passwords(State(context): State<AppContext>) -> AppResult<Vec<Password>> {
     let data = sqlx::query_as!(Password, "SELECT * FROM passwords")
         .fetch_all(&context.db)
         .await
         .unwrap();
 
-    Json(data)
+    Ok(Json(data))
 }
