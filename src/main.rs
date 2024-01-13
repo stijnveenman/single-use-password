@@ -1,3 +1,4 @@
+mod app_context;
 mod config;
 
 use axum::{extract::State, http::StatusCode, response::IntoResponse, routing::get, Json, Router};
@@ -6,13 +7,10 @@ use config::Config;
 use dotenv::dotenv;
 use serde::Serialize;
 use serde_json::{json, Value};
-use sqlx::{postgres::PgPoolOptions, types::Uuid, PgPool};
+use sqlx::{postgres::PgPoolOptions, types::Uuid};
 use thiserror::Error;
 
-#[derive(Clone)]
-struct AppContext {
-    db: PgPool,
-}
+use crate::app_context::AppContext;
 
 #[tokio::main]
 async fn main() {
