@@ -1,4 +1,8 @@
-use axum::{extract::State, routing::get, Json, Router};
+use axum::{
+    extract::{Path, State},
+    routing::get,
+    Json, Router,
+};
 use rand::{distributions::Alphanumeric, rngs::OsRng, Rng};
 use serde::{Deserialize, Serialize};
 use tracing::info;
@@ -10,10 +14,12 @@ use crate::{
 };
 
 pub fn router() -> Router<AppContext> {
-    Router::new().route("/", get(get_passwords).post(create_password))
+    Router::new()
+        .route("/", get(get_passwords).post(create_password))
+        .route("/:id", get(get_password))
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, sqlx::FromRow)]
 struct Password {
     id: Uuid,
     key: String,
@@ -66,4 +72,17 @@ async fn create_password(
             Err(AppError::Unexpected)
         }
     }
+}
+
+async fn get_password(
+    State(context): State<AppContext>,
+    Path(id): Path<Uuid>,
+) -> AppResult<Password> {
+    let password: Password = sqlx::query_as("SELECT * FROM passwords WHERE id = ?")
+        .bind(id)
+        .fetch_one(&context.db)
+        .await
+        .map_err(|_| AppError::NotFound)?;
+
+    Err(AppError::NotImplemented)
 }

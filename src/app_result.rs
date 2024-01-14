@@ -11,6 +11,8 @@ pub enum AppError {
     NotImplemented,
     #[error("Unexpected error")]
     Unexpected,
+    #[error("Item not found")]
+    NotFound,
 }
 
 impl IntoResponse for AppError {
@@ -20,6 +22,7 @@ impl IntoResponse for AppError {
                 AppError::Random => StatusCode::BAD_REQUEST,
                 AppError::NotImplemented => StatusCode::BAD_REQUEST,
                 AppError::Unexpected => StatusCode::INTERNAL_SERVER_ERROR,
+                AppError::NotFound => StatusCode::NOT_FOUND,
             },
             Json(json!({"error":self.to_string()})),
         )
