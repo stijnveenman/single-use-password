@@ -1,11 +1,11 @@
 use axum::{
-    extract::{Path, State},
+    extract::{Path, Query, State},
     routing::get,
     Json, Router,
 };
 use rand::{distributions::Alphanumeric, rngs::OsRng, Rng};
 use serde::{Deserialize, Serialize};
-use tracing::info;
+use tracing::{info, warn};
 use uuid::Uuid;
 
 use crate::{
@@ -19,7 +19,7 @@ pub fn router() -> Router<AppContext> {
         .route("/:id", get(get_password))
 }
 
-#[derive(Serialize, sqlx::FromRow)]
+#[derive(Serialize, sqlx::FromRow, Debug)]
 struct Password {
     id: Uuid,
     key: String,
@@ -74,15 +74,37 @@ async fn create_password(
     }
 }
 
+#[derive(Deserialize, Debug)]
+struct PasswordKeyParams {
+    key: String,
+}
+
 async fn get_password(
     State(context): State<AppContext>,
     Path(id): Path<Uuid>,
+    params: Query<PasswordKeyParams>,
 ) -> AppResult<Password> {
-    let password: Password = sqlx::query_as("SELECT * FROM passwords WHERE id = ?")
-        .bind(id)
+    let password: Password = sqlx::query_as!(Password, "SELECT * FROM passwords WHERE id = $1", id)
         .fetch_one(&context.db)
         .await
-        .map_err(|_| AppError::NotFound)?;
+        .map_err(|e| {
+            warn!("Error getting password {}", e);
+            AppError::NotFound
+        })?;
 
-    Err(AppError::NotImplemented)
+    if password.key != params.key {
+        return Err(AppError::NotFound);
+    }
+
+    let result = sqlx::query!("DELETE FROM passwords WHERE id = $1", id)
+        .execute(&context.db)
+        .await;
+
+    match result {
+        Ok(_) => Ok(Json(password)),
+        Err(e) => {
+            warn!("Error deleting password: {}", e);
+            Err(AppError::Random)
+        }
+    }
 }
