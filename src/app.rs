@@ -2,13 +2,22 @@ use crate::error_template::{AppError, ErrorTemplate};
 use leptos::*;
 use leptos_meta::*;
 use leptos_router::*;
+use stylist::style;
 
 #[component]
 pub fn App() -> impl IntoView {
     // Provides context that manages stylesheets, titles, meta tags, etc.
     provide_meta_context();
 
-    view! {
+    let style = style!(
+        main {
+            font-family: sans-serif;
+            text-align: center;
+        }
+    );
+
+    styled::view! {
+        style,
         <Title text="Welcome to Leptos"/>
         // content for this welcome page
         <Router fallback=|| {
