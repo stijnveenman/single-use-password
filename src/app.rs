@@ -9,11 +9,7 @@ pub fn App() -> impl IntoView {
     provide_meta_context();
 
     view! {
-        <Stylesheet id="leptos" href="/pkg/test.css"/>
-
-        // sets the document title
         <Title text="Welcome to Leptos"/>
-
         // content for this welcome page
         <Router fallback=|| {
             let mut outside_errors = Errors::default();
@@ -41,4 +37,3 @@ fn HomePage() -> impl IntoView {
         <button on:click=on_click>"Click Me: " {count}</button>
     }
 }
-
