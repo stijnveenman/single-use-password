@@ -1,4 +1,3 @@
-mod app_context;
 mod app_result;
 mod config;
 mod passwords;
@@ -12,10 +11,11 @@ use dotenv::dotenv;
 use serde_json::Value;
 use sqlx::postgres::PgPoolOptions;
 
-use crate::app_context::AppContext;
-
 cfg_if! {
 if #[cfg(feature = "ssr")]  {
+    mod app_context;
+
+    use crate::app_context::AppContext;
     use axum::{routing::get, Router, extract::{State, RawQuery, Path}, body::Body as AxumBody, http::{Request, header::HeaderMap}, response::{Response, IntoResponse}};
     use leptos::*;
     use leptos_axum::{generate_route_list, LeptosRoutes, handle_server_fns_with_context};

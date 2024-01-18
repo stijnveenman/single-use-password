@@ -4,7 +4,8 @@ use axum::{
     Json, Router,
 };
 use rand::{distributions::Alphanumeric, rngs::OsRng, Rng};
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
+use single_use_password::password::Password;
 use tracing::{info, warn};
 use uuid::Uuid;
 
@@ -17,13 +18,6 @@ pub fn router() -> Router<AppContext> {
     Router::new()
         .route("/", get(get_passwords).post(create_password))
         .route("/:id", get(get_password))
-}
-
-#[derive(Serialize, sqlx::FromRow, Debug)]
-struct Password {
-    id: Uuid,
-    key: String,
-    password: String,
 }
 
 async fn get_passwords(State(context): State<AppContext>) -> AppResult<Vec<Password>> {
