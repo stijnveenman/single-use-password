@@ -1,9 +1,5 @@
-use leptos::{
-    ev::{MouseEvent, SubmitEvent},
-    html::Input,
-    *,
-};
-use leptos_router::{use_navigate, use_params_map};
+use leptos::{ev::SubmitEvent, html::Input, *};
+use leptos_router::{use_params_map, use_query, use_query_map};
 use uuid::Uuid;
 
 use crate::password::{unlock_password, Password};
@@ -11,6 +7,7 @@ use crate::password::{unlock_password, Password};
 #[component]
 fn UnlockForm(#[prop(into)] on_unlock: Callback<Password>) -> impl IntoView {
     let params = use_params_map();
+    let query = use_query_map();
     let (loading, set_loading) = create_signal(false);
     let (error, set_error) = create_signal(None);
 
@@ -19,6 +16,8 @@ fn UnlockForm(#[prop(into)] on_unlock: Callback<Password>) -> impl IntoView {
             .with(|params| params.get("id").cloned())
             .and_then(|id| Uuid::parse_str(&id).ok())
     };
+
+    let key = query.with(|query| query.get("key").cloned());
 
     let input_element: NodeRef<Input> = create_node_ref();
     let on_submit = move |ev: SubmitEvent| {
@@ -58,6 +57,7 @@ fn UnlockForm(#[prop(into)] on_unlock: Callback<Password>) -> impl IntoView {
                 <input
                     node_ref=input_element
                     type="text"
+                    value=key
                     placeholder="Enter key"
                     class="input input-bordered w-full "
                 />
