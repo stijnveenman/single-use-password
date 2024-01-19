@@ -39,6 +39,7 @@ async fn unlock_password(id: Uuid, key: String) -> Result<Password, ServerFnErro
 #[component]
 pub fn PasswordPage() -> impl IntoView {
     let params = use_params_map();
+    let (password, set_password) = create_signal(None);
 
     let id = move || {
         params
@@ -55,17 +56,37 @@ pub fn PasswordPage() -> impl IntoView {
         if let Some(id) = id() {
             spawn_local(async move {
                 let result = unlock_password(id, key).await;
-                logging::log!("{:?}", result);
+                match result {
+                    Ok(password) => set_password(Some(password)),
+                    Err(e) => logging::log!("{:?}", e),
+                }
             });
         }
     };
 
     view! {
         <h1>"Welcome to Single-Use-Password"</h1>
-        <p>"Enter password to unlock:"</p>
-        <form on:submit=on_submit>
-            <input type="text" node_ref=input_element/>
-            <input type="submit" value="Submit"/>
-        </form>
+
+        {move || match password.get() {
+            Some(password) => {
+                view! {
+                    <div>
+                        <p>Password:</p>
+                        <h2>{password.password}</h2>
+                    </div>
+                }
+                    .into_any()
+            }
+            None => {
+                view! {
+                    <form on:submit=on_submit>
+                        <p>"Enter password to unlock:"</p>
+                        <input type="text" node_ref=input_element/>
+                        <input type="submit" value="Submit"/>
+                    </form>
+                }
+                    .into_any()
+            }
+        }}
     }
 }
