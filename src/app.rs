@@ -23,6 +23,10 @@ pub fn App() -> impl IntoView {
     styled::view! {
         style,
         <Title text="Welcome to Leptos"/>
+
+        <Link rel="shortcut icon" type_="image/ico" href="/static/favicon.ico"/>
+        <Stylesheet id="leptos" href="/static/output.css"/>
+
         // content for this welcome page
         <Router fallback=|| {
             let mut outside_errors = Errors::default();
