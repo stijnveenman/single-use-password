@@ -3,7 +3,7 @@ use leptos::{
     html::Input,
     *,
 };
-use leptos_router::use_params_map;
+use leptos_router::{use_navigate, use_params_map};
 use uuid::Uuid;
 
 use crate::password::{unlock_password, Password};
@@ -105,11 +105,6 @@ fn UnlockForm(#[prop(into)] on_unlock: Callback<Password>) -> impl IntoView {
 
 #[component]
 fn PasswordDisplay(password: Password) -> impl IntoView {
-    let clippass = password.password.to_string();
-    let on_click = move |_ev: MouseEvent| {
-        log::info!("{:?}", clippass);
-    };
-
     view! {
         <div class="sm:mx-auto sm:w-full sm:max-w-sm">
             <img
@@ -131,7 +126,14 @@ fn PasswordDisplay(password: Password) -> impl IntoView {
                     disabled
                 />
 
-                <button class="btn" on:click=on_click>
+                <button
+                    class="btn"
+                    onclick=format!(
+                        "navigator.clipboard.writeText('{}')",
+                        &password.password.replace('\'', "\\'"),
+                    )
+                >
+
                     Copy
                 </button>
             </div>

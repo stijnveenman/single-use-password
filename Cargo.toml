@@ -17,6 +17,7 @@ clap = { version = "4.4.11", features = ["env", "derive"] }
 dotenv = { version = "0.15.0" }
 rand = { version = "0.8.5" }
 
+html-escape = "0.2.13"
 tracing-subscriber = "0.3.16"
 axum = { version = "0.6.4", optional = true }
 console_error_panic_hook = "0.1"
