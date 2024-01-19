@@ -25,7 +25,10 @@ pub fn App() -> impl IntoView {
             outside_errors.insert_with_default_key(AppError::NotFound);
             view! { <ErrorTemplate outside_errors/> }.into_view()
         }>
-            <Html class="h-full bg-white"/>
+            <Html
+                attributes=vec![("data-theme", Attribute::String("corporate".into()))]
+                class=" h-full bg-white"
+            />
             <Body class="h-full"/>
             <main class="h-full">
                 <Routes>

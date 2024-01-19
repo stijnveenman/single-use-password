@@ -18,6 +18,8 @@ Cargo.lock
 
 /target
 
+node_modules
+
 # tailwind build artifact
 public/static/output.css
 
