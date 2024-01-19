@@ -14,6 +14,7 @@ pub struct AppContext {
     pub db: PgPool,
 }
 
+#[allow(dead_code)]
 pub fn pool() -> Result<PgPool, ServerFnError> {
     use_context::<PgPool>().ok_or_else(|| ServerFnError::ServerError("Pool missing.".into()))
 }

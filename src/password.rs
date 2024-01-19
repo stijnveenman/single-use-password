@@ -3,12 +3,30 @@ use leptos_router::use_params_map;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
+use crate::app_context;
+
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 #[cfg_attr(feature = "ssr", derive(sqlx::FromRow))]
 pub struct Password {
     pub id: Uuid,
     pub key: String,
     pub password: String,
+}
+
+#[server(UnlockPassword)]
+async fn unlock_password(id: Uuid, key: String) -> Result<Password, ServerFnError> {
+    let pool = app_context::pool()?;
+
+    let password = sqlx::query_as!(Password, "SELECT * FROM passwords WHERE id = $1", id)
+        .fetch_one(&pool)
+        .await
+        .map_err(|_| ServerFnError::ServerError("Not found".into()))?;
+
+    if password.key != key {
+        return Err(ServerFnError::ServerError("Invalid password".into()));
+    }
+
+    Ok(password)
 }
 
 #[component]
@@ -19,26 +37,28 @@ pub fn PasswordPage() -> impl IntoView {
         params
             .with(|params| params.get("id").cloned())
             .and_then(|id| Uuid::parse_str(&id).ok())
-            .map(|id| id.to_string())
     };
 
-    let (name, set_name) = create_signal("Uncontrolled".to_string());
     let input_element: NodeRef<Input> = create_node_ref();
     let on_submit = move |ev: SubmitEvent| {
         ev.prevent_default();
 
-        let value = input_element().expect("<input> to exist").value();
-        set_name(value);
+        let key = input_element().expect("<input> to exist").value();
+
+        if let Some(id) = id() {
+            spawn_local(async move {
+                let result = unlock_password(id, key).await;
+                logging::log!("{:?}", result);
+            });
+        }
     };
 
     view! {
         <h1>"Welcome to Single-Use-Password"</h1>
-        <p>{id}</p>
         <p>"Enter password to unlock:"</p>
         <form on:submit=on_submit>
-            <input type="text" value=name node_ref=input_element/>
+            <input type="text" node_ref=input_element/>
             <input type="submit" value="Submit"/>
         </form>
-        <p>"Name is: " {name}</p>
     }
 }
