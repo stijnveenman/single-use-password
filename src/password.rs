@@ -33,8 +33,8 @@ pub fn PasswordPage() -> impl IntoView {
 
     view! {
         <h1>"Welcome to Single-Use-Password"</h1>
-        <p>"Enter password to unlock:"</p>
         <p>{id}</p>
+        <p>"Enter password to unlock:"</p>
         <form on:submit=on_submit>
             <input type="text" value=name node_ref=input_element/>
             <input type="submit" value="Submit"/>
