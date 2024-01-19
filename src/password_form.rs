@@ -57,6 +57,7 @@ fn UnlockForm(#[prop(into)] on_unlock: Callback<Password>) -> impl IntoView {
                 <input
                     node_ref=input_element
                     type="text"
+                    name="key"
                     value=key
                     placeholder="Enter key"
                     class="input input-bordered w-full "
@@ -121,6 +122,7 @@ fn PasswordDisplay(password: Password) -> impl IntoView {
             <div class="join w-full">
                 <input
                     type="text"
+                    name="password"
                     class="input input-bordered w-full !cursor-default"
                     value=&password.password
                     disabled
