@@ -14,7 +14,7 @@ pub struct Password {
 }
 
 #[server(UnlockPassword)]
-async fn unlock_password(id: Uuid, key: String) -> Result<Password, ServerFnError> {
+pub async fn unlock_password(id: Uuid, key: String) -> Result<Password, ServerFnError> {
     let pool = app_context::pool()?;
 
     let password = sqlx::query_as!(Password, "SELECT * FROM passwords WHERE id = $1", id)
@@ -23,7 +23,7 @@ async fn unlock_password(id: Uuid, key: String) -> Result<Password, ServerFnErro
         .map_err(|_| ServerFnError::ServerError("Not found".into()))?;
 
     if password.key != key {
-        return Err(ServerFnError::ServerError("Invalid password".into()));
+        return Err(ServerFnError::ServerError("Invalid key".into()));
     }
 
     let result = sqlx::query!("DELETE FROM passwords WHERE id = $1", id)

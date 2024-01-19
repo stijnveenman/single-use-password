@@ -32,9 +32,7 @@ pub fn App() -> impl IntoView {
             <Body class="h-full"/>
             <main class="h-full">
                 <Routes>
-                    <Route path="" view=HomePage/>
-                    <Route path="/new" view=PasswordForm/>
-                    <Route path=":id" view=PasswordPage/>
+                    <Route path=":id" view=PasswordForm/>
                 </Routes>
             </main>
         </Router>
