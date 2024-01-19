@@ -1,5 +1,5 @@
 use leptos::{ev::SubmitEvent, html::Input, *};
-use leptos_router::{use_params_map, use_query, use_query_map};
+use leptos_router::{use_params_map, use_query_map};
 use uuid::Uuid;
 
 use crate::password::{unlock_password, Password};
@@ -17,7 +17,7 @@ fn UnlockForm(#[prop(into)] on_unlock: Callback<Password>) -> impl IntoView {
             .and_then(|id| Uuid::parse_str(&id).ok())
     };
 
-    let key = query.with(|query| query.get("key").cloned());
+    let key = query.with_untracked(|query| query.get("key").cloned());
 
     let input_element: NodeRef<Input> = create_node_ref();
     let on_submit = move |ev: SubmitEvent| {
