@@ -1,7 +1,7 @@
 use crate::{
     app_context,
     error_template::{AppError, ErrorTemplate},
-    password::Password,
+    password::{Password, PasswordPage},
 };
 use leptos::*;
 use leptos_meta::*;
@@ -32,6 +32,7 @@ pub fn App() -> impl IntoView {
             <main>
                 <Routes>
                     <Route path="" view=HomePage/>
+                    <Route path=":id" view=PasswordPage/>
                 </Routes>
             </main>
         </Router>
