@@ -1,4 +1,8 @@
-use leptos::{ev::SubmitEvent, html::Input, *};
+use leptos::{
+    ev::{MouseEvent, SubmitEvent},
+    html::Input,
+    *,
+};
 use leptos_router::use_params_map;
 use uuid::Uuid;
 
@@ -101,6 +105,11 @@ fn UnlockForm(#[prop(into)] on_unlock: Callback<Password>) -> impl IntoView {
 
 #[component]
 fn PasswordDisplay(password: Password) -> impl IntoView {
+    let clippass = password.password.to_string();
+    let on_click = move |_ev: MouseEvent| {
+        log::info!("{:?}", clippass);
+    };
+
     view! {
         <div class="sm:mx-auto sm:w-full sm:max-w-sm">
             <img
@@ -114,12 +123,19 @@ fn PasswordDisplay(password: Password) -> impl IntoView {
         </div>
 
         <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-            <input
-                type="text"
-                class="input input-bordered w-full !cursor-default"
-                value=password.password
-                disabled
-            />
+            <div class="join w-full">
+                <input
+                    type="text"
+                    class="input input-bordered w-full !cursor-default"
+                    value=&password.password
+                    disabled
+                />
+
+                <button class="btn" on:click=on_click>
+                    Copy
+                </button>
+            </div>
+
         </div>
 
         <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
