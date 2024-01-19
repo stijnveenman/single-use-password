@@ -1,5 +1,4 @@
-use leptos::{ev::SubmitEvent, html::Input, *};
-use leptos_router::use_params_map;
+use leptos::*;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
@@ -13,6 +12,7 @@ pub struct Password {
     pub password: String,
 }
 
+#[allow(unreachable_code)]
 #[server(UnlockPassword)]
 pub async fn unlock_password(id: Uuid, key: String) -> Result<Password, ServerFnError> {
     let pool = app_context::pool()?;
@@ -25,6 +25,9 @@ pub async fn unlock_password(id: Uuid, key: String) -> Result<Password, ServerFn
     if password.key != key {
         return Err(ServerFnError::ServerError("Invalid key".into()));
     }
+
+    #[cfg(debug_assertions)]
+    return Ok(password);
 
     let result = sqlx::query!("DELETE FROM passwords WHERE id = $1", id)
         .execute(&pool)

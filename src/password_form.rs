@@ -22,7 +22,6 @@ fn UnlockForm(#[prop(into)] on_unlock: Callback<Password>) -> impl IntoView {
 
         let key = input_element().expect("<input> to exist").value();
 
-        logging::log!("{:?}", key);
         if let Some(id) = id() {
             spawn_local(async move {
                 set_error(None);
@@ -101,8 +100,41 @@ fn UnlockForm(#[prop(into)] on_unlock: Callback<Password>) -> impl IntoView {
 }
 
 #[component]
+fn PasswordDisplay(password: Password) -> impl IntoView {
+    view! {
+        <div class="sm:mx-auto sm:w-full sm:max-w-sm">
+            <img
+                class="mx-auto h-10 w-auto"
+                src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+                alt="Your Company"
+            />
+            <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+                Password unlocked
+            </h2>
+        </div>
+
+        <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+            <input
+                type="text"
+                class="input input-bordered w-full !cursor-default"
+                value=password.password
+                disabled
+            />
+        </div>
+
+        <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+            <p class="mt-10 text-center text-sm text-gray-500">
+                Need to share a password?
+                <a href="#" class="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
+                    Create one
+                </a>
+            </p>
+        </div>
+    }
+}
+
+#[component]
 pub fn PasswordForm() -> impl IntoView {
-    let params = use_params_map();
     let (password, set_password) = create_signal(None);
 
     view! {
@@ -112,7 +144,7 @@ pub fn PasswordForm() -> impl IntoView {
                     view! { <UnlockForm on_unlock=move |password| set_password(Some(password))/> }
                         .into_view()
                 }
-                Some(password) => view! { password.password }.into_view(),
+                Some(password) => view! { <PasswordDisplay password=password/> }.into_view(),
             }}
 
         </div>
