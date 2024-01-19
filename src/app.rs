@@ -2,26 +2,18 @@ use crate::{
     app_context,
     error_template::{AppError, ErrorTemplate},
     password::{Password, PasswordPage},
+    password_form::PasswordForm,
 };
 use leptos::*;
 use leptos_meta::*;
 use leptos_router::*;
-use stylist::style;
 
 #[component]
 pub fn App() -> impl IntoView {
     // Provides context that manages stylesheets, titles, meta tags, etc.
     provide_meta_context();
 
-    let style = style!(
-        main {
-            font-family: sans-serif;
-            text-align: center;
-        }
-    );
-
-    styled::view! {
-        style,
+    view! {
         <Title text="Welcome to Leptos"/>
 
         <Link rel="shortcut icon" type_="image/ico" href="/static/favicon.ico"/>
@@ -33,9 +25,12 @@ pub fn App() -> impl IntoView {
             outside_errors.insert_with_default_key(AppError::NotFound);
             view! { <ErrorTemplate outside_errors/> }.into_view()
         }>
-            <main>
+            <Html class="h-full bg-white"/>
+            <Body class="h-full"/>
+            <main class="h-full">
                 <Routes>
                     <Route path="" view=HomePage/>
+                    <Route path="/new" view=PasswordForm/>
                     <Route path=":id" view=PasswordPage/>
                 </Routes>
             </main>
