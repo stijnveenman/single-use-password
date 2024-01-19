@@ -26,7 +26,14 @@ async fn unlock_password(id: Uuid, key: String) -> Result<Password, ServerFnErro
         return Err(ServerFnError::ServerError("Invalid password".into()));
     }
 
-    Ok(password)
+    let result = sqlx::query!("DELETE FROM passwords WHERE id = $1", id)
+        .execute(&pool)
+        .await;
+
+    match result {
+        Ok(_) => Ok(password),
+        Err(e) => Err(ServerFnError::ServerError(e.to_string())),
+    }
 }
 
 #[component]
