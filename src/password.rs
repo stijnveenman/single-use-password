@@ -1,9 +1,6 @@
 use leptos::*;
-use rand::{distributions::Alphanumeric, rngs::OsRng, Rng};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
-
-use crate::app_context;
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq, Clone)]
 #[cfg_attr(feature = "ssr", derive(sqlx::FromRow))]
@@ -16,6 +13,8 @@ pub struct Password {
 #[allow(unreachable_code)]
 #[server(UnlockPassword)]
 pub async fn unlock_password(id: Uuid, key: String) -> Result<Password, ServerFnError> {
+    use crate::app_context;
+
     let pool = app_context::pool()?;
 
     let password = sqlx::query_as!(Password, "SELECT * FROM passwords WHERE id = $1", id)
@@ -42,6 +41,9 @@ pub async fn unlock_password(id: Uuid, key: String) -> Result<Password, ServerFn
 
 #[server(CreatePassword)]
 pub async fn create_password(password: String) -> Result<Password, ServerFnError> {
+    use crate::app_context;
+    use rand::{distributions::Alphanumeric, rngs::OsRng, Rng};
+
     let pool = app_context::pool()?;
 
     let key: String = OsRng

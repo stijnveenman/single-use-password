@@ -58,6 +58,11 @@ async fn main() {
         .await
         .unwrap();
 
+    sqlx::migrate!()
+        .run(&pool)
+        .await
+        .expect("should migrate database on start");
+
     let conf = get_configuration(None).await.unwrap();
     let leptos_options = conf.leptos_options;
     let addr = leptos_options.site_addr;
