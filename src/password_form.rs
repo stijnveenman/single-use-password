@@ -96,7 +96,10 @@ fn UnlockForm(#[prop(into)] on_unlock: Callback<Password>) -> impl IntoView {
 
             <p class="mt-10 text-center text-sm text-gray-500">
                 Need to share a password?
-                <a href="#" class="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
+                <a
+                    href="/create"
+                    class="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
+                >
                     Create one
                 </a>
             </p>

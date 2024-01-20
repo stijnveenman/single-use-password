@@ -1,6 +1,7 @@
 use cfg_if::cfg_if;
 pub mod app;
 pub mod app_context;
+pub mod create_password_form;
 pub mod error_template;
 pub mod fileserv;
 pub mod password;

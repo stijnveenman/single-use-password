@@ -1,4 +1,5 @@
 use crate::{
+    create_password_form::CreatePasswordForm,
     error_template::{AppError, ErrorTemplate},
     password_form::PasswordForm,
 };
@@ -30,6 +31,7 @@ pub fn App() -> impl IntoView {
             <Body class="h-full"/>
             <main class="h-full">
                 <Routes>
+                    <Route path="create" view=CreatePasswordForm/>
                     <Route path=":id" view=PasswordForm/>
                 </Routes>
             </main>
