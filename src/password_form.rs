@@ -123,7 +123,6 @@ fn PasswordDisplay(password: Password) -> impl IntoView {
 
         <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
             <div class="join w-full">
-                <span class="badge">Badge</span>
                 <input
                     type="text"
                     name="password"

@@ -86,7 +86,8 @@ fn CreatePassword(#[prop(into)] on_create: Callback<Password>) -> impl IntoView 
 #[component]
 fn ShowPassword(password: Password) -> impl IntoView {
     let origin = leptos_dom::helpers::location().origin().unwrap();
-    log::info!("{:?}", origin + "/guid");
+    let link = origin + "/" + &password.id.to_string();
+    let link_with_key = link.clone() + "?key=" + &password.key;
 
     view! {
         <div class="sm:mx-auto sm:w-full sm:max-w-sm">
@@ -119,6 +120,58 @@ fn ShowPassword(password: Password) -> impl IntoView {
                         onclick=format!(
                             "navigator.clipboard.writeText('{}')",
                             &password.key.replace('\'', "\\'"),
+                        )
+                    >
+
+                        Copy
+                    </button>
+                </div>
+            </label>
+
+            <label class="form-control w-full">
+                <div class="label">
+                    <span class="label-text font-bold">Share link:</span>
+                </div>
+                <div class="join w-full">
+                    <input
+                        type="text"
+                        name="key"
+                        class="input input-bordered w-full !cursor-default"
+                        value=&link
+                        disabled
+                    />
+
+                    <button
+                        class="btn"
+                        onclick=format!(
+                            "navigator.clipboard.writeText('{}')",
+                            &link.replace('\'', "\\'"),
+                        )
+                    >
+
+                        Copy
+                    </button>
+                </div>
+            </label>
+
+            <label class="form-control w-full">
+                <div class="label">
+                    <span class="label-text font-bold">Share link with key:</span>
+                </div>
+                <div class="join w-full">
+                    <input
+                        type="text"
+                        name="key"
+                        class="input input-bordered w-full !cursor-default"
+                        value=&link_with_key
+                        disabled
+                    />
+
+                    <button
+                        class="btn"
+                        onclick=format!(
+                            "navigator.clipboard.writeText('{}')",
+                            &link_with_key.replace('\'', "\\'"),
                         )
                     >
 
