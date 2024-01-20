@@ -84,6 +84,51 @@ fn CreatePassword(#[prop(into)] on_create: Callback<Password>) -> impl IntoView 
 }
 
 #[component]
+fn ShowPassword(password: Password) -> impl IntoView {
+    view! {
+        <div class="sm:mx-auto sm:w-full sm:max-w-sm">
+            <img
+                class="mx-auto h-10 w-auto"
+                src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+                alt="Your Company"
+            />
+            <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+                Password created
+            </h2>
+        </div>
+
+        <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+            <label class="form-control w-full">
+                <div class="label">
+                    <span class="label-text font-bold">Key:</span>
+                </div>
+                <div class="join w-full">
+                    <input
+                        type="text"
+                        name="key"
+                        class="input input-bordered w-full !cursor-default"
+                        value=&password.key
+                        disabled
+                    />
+
+                    <button
+                        class="btn"
+                        onclick=format!(
+                            "navigator.clipboard.writeText('{}')",
+                            &password.key.replace('\'', "\\'"),
+                        )
+                    >
+
+                        Copy
+                    </button>
+                </div>
+            </label>
+
+        </div>
+    }
+}
+
+#[component]
 pub fn CreatePasswordForm() -> impl IntoView {
     let (password, set_password) = create_signal(None);
 
@@ -96,7 +141,7 @@ pub fn CreatePasswordForm() -> impl IntoView {
                     }
                         .into_view()
                 }
-                Some(password) => view! { "list password" }.into_view(),
+                Some(password) => view! { <ShowPassword password=password/> }.into_view(),
             }}
 
         </div>
