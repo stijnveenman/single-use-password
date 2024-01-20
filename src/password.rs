@@ -41,7 +41,7 @@ pub async fn unlock_password(id: Uuid, key: String) -> Result<Password, ServerFn
 }
 
 #[server(CreatePassword)]
-async fn create_password(password: String) -> Result<Password, ServerFnError> {
+pub async fn create_password(password: String) -> Result<Password, ServerFnError> {
     let pool = app_context::pool()?;
 
     let key: String = OsRng

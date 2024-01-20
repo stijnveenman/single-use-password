@@ -1,23 +1,29 @@
 use leptos::{ev::SubmitEvent, html::Input, *};
 
-use crate::password::Password;
+use crate::password::{create_password, Password};
 
 #[component]
 fn CreatePassword(#[prop(into)] on_create: Callback<Password>) -> impl IntoView {
     let (loading, set_loading) = create_signal(false);
-    let (error, set_error) = create_signal::<Option<()>>(None);
+    let (error, set_error) = create_signal(None);
 
     let input_element: NodeRef<Input> = create_node_ref();
 
     let on_submit = move |ev: SubmitEvent| {
         ev.prevent_default();
 
-        let key = input_element().expect("<input> to exist").value();
+        let password = input_element().expect("<input> to exist").value();
 
         spawn_local(async move {
             set_error(None);
             set_loading(true);
+            let result = create_password(password).await;
             set_loading(false);
+            match result {
+                Ok(password) => on_create(password),
+                Err(ServerFnError::ServerError(e)) => set_error(Some(e)),
+                Err(_) => set_error(Some("Unknown error".into())),
+            }
         });
     };
 
