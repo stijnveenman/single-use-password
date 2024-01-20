@@ -85,6 +85,9 @@ fn CreatePassword(#[prop(into)] on_create: Callback<Password>) -> impl IntoView 
 
 #[component]
 fn ShowPassword(password: Password) -> impl IntoView {
+    let origin = leptos_dom::helpers::location().origin().unwrap();
+    log::info!("{:?}", origin + "/guid");
+
     view! {
         <div class="sm:mx-auto sm:w-full sm:max-w-sm">
             <img
